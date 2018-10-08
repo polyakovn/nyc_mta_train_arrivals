@@ -1,0 +1,6 @@
+orderedset==2.0.1
+Flask==1.0.2
+requests==2.19.1
+protobuf3_to_dict==0.1.5
+protobuf==3.6.1
+protobuf_to_dict==0.1.0
