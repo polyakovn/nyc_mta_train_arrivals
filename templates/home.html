@@ -5,6 +5,7 @@
   #times {
       font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
       width: 100%;
+      padding: 10px;
   }
 
   #times td, #times th {
@@ -24,15 +25,29 @@
       color: white;
   }
 
-  #title {
+  h1 {
     text-align: center;
+  }
+
+  select {
+    border-radius: 10px;
+  }
+
+  #selections {
+    padding-left: 8px;
+  }
+
+  #current_time {
+    padding-left: 10px;
+    font-weight:300;
   }
 
 </style>
 <body>
   <h1 id="title">Where's My Train?</h1>
+  <!--<img src="m.svg" alt="m-pic">-->
   <h4 id="current_time"></h4>
-  <select id="station" onchange="get_station_info()">
+  <div id="selections"><select id="station" onchange="get_station_info()">
     <option>--Station--</option>
     {% for stop in stop_names %}
     <option>{{ stop }}</option>
@@ -41,6 +56,7 @@
   <select id="line_selector" onchange="filter_by_line()">
     <option>--Line--</option>
   </select>
+  </div>
   <table id="times"></table>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script type="text/javascript">
@@ -63,12 +79,13 @@
 
   function make_table(train_list) {
     $('#times tr').remove();
-    $('#times').append('<tr><th>Line</th><th>Direction</th><th>Next Arrivals</th></tr>')
+    $('#times').append('<tr><th>Line</th><th>Direction</th><th>Next Arrivals (in minutes from now)</th></tr>')
     var line_set = new Set();
     for(train in train_list) {
       let key = train.split(" ");
       let line = key[1];
-      let direction = key[0].slice(-1);
+      let dir = key[0].slice(-1);
+      let direction = dir == 'S' ? 'South' : 'North';
       let arrival_times = train_list[train].slice(0,3);
       add_station_row(line, direction, arrival_times);
       line_set.add(line);

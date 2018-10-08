@@ -80,11 +80,12 @@ def find_next_arrivals(train_feed, station_id):
                     arrival_time = arrivals['arrival']['time']
                     if arrival_time != None:
                         time_diff = time_from_now(arrival_time)
-                        stop_line = stop_id + " " + line
-                        if stop_line not in train_dict:
-                            train_dict[stop_line] = [time_diff]
-                        else:
-                            train_dict[stop_line].append(time_diff)
+                        if time_diff >= 0:
+                            stop_line = stop_id + " " + line
+                            if stop_line not in train_dict:
+                                train_dict[stop_line] = [time_diff]
+                            else:
+                                train_dict[stop_line].append(time_diff)
     return train_dict
 
 @app.route('/')
