@@ -57,14 +57,6 @@ def time_from_now(epoch_time):
     time_until_train = int(int(epoch_time - current_time) / 60)
     return time_until_train
 
-class Train:
-    def __init__(self, station, line, times):
-        self.station = station
-        self.line = line
-        self.times = times
-        self.direction = station[-1]
-
-
 def find_next_arrivals(train_feed, station_id):
     south_id = station_id + "S"
     north_id = station_id + "N"

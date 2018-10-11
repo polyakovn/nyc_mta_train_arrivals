@@ -45,7 +45,6 @@
 </style>
 <body>
   <h1 id="title">Where's My Train?</h1>
-  <!--<img src="m.svg" alt="m-pic">-->
   <h4 id="current_time"></h4>
   <div id="selections"><select id="station" onchange="get_station_info()">
     <option>--Station--</option>
@@ -125,6 +124,11 @@
       });
     }
   }
+
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket.on('connect', function() {
+        socket.emit('my event', {data: 'I\'m connected!'});
+    });
 
 </script>
 </body>
