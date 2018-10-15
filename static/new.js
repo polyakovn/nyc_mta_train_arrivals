@@ -1,7 +1,10 @@
-$('#line_selector').hide();
-var dt = new Date();
-var cur_time = dt.toLocaleTimeString();
-$('#current_time').text("It is currently " + cur_time);
+document.addEventListener('DOMContentLoaded', function() {
+  $('#line_selector').hide();
+  var dt = new Date();
+  var cur_time = dt.toLocaleTimeString();
+  $('#current_time').text("It is currently " + cur_time);
+}, false);
+
 
 function get_station_info() {
   $('#line_selector').find('option').remove().end().append('<option>--Line--</option>');
