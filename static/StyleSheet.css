@@ -1,0 +1,39 @@
+#times {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    width: 100%;
+    padding: 10px;
+}
+
+#times td, #times th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#times tr:nth-child(even){background-color: #f2f2f2;}
+
+#times tr:hover {background-color: #ddd;}
+
+#times th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+h1 {
+  text-align: center;
+}
+
+select {
+  border-radius: 10px;
+}
+
+#selections {
+  padding-left: 8px;
+}
+
+#current_time {
+  padding-left: 10px;
+  font-weight:300;
+}

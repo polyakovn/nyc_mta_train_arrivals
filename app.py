@@ -9,7 +9,7 @@ stop_dict = {}
 stop_names = []
 api_key = '75b4f38677044eca8103ef4bea7cd386'
 
-with open('Stations.csv') as csv_file:
+with open('static/Stations.csv') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     for row in csv_reader:
         station_id = row[2]
