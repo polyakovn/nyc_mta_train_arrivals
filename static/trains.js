@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
   $('#current_time').text("It is currently " + cur_time);
 }, false);
 
-
 function get_station_info() {
   $('#line_selector').find('option').remove().end().append('<option>--Line--</option>');
   var station = document.getElementById("station");
