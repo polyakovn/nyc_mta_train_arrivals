@@ -8,10 +8,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function get_station_info() {
   var selected_station = $('#station').find(":selected").text();
-  $.get('/station_info', {'station':selected_station} , function(train_info) {
-    var trains = JSON.parse(train_info);
-    display_results(trains);
-  });
+    $.get('/station_info', {'station':selected_station} , function(train_info) {
+      try {
+        var trains = JSON.parse(train_info);
+        display_results(trains);
+      } catch(error) {
+        console.log(error);
+      }
+    });
 }
 
 function display_results(trains) {

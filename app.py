@@ -160,10 +160,9 @@ def setup_page():
     return render_template("home.html", stop_names = stop_names)
 
 @app.route('/station_info')
-def get_station_info(station_name=None):
-    if station_name == None:
-        station_name = request.args['station']
-    arrivals_list = mta.get_station_arrivals(station_name)
+def get_station_info():
+    station_name = request.args['station']
+    arrivals_list = mta.get_station_arrivals(station_name)        
     return turn_to_json(arrivals_list)
 
 @app.route('/filter_by_line')
