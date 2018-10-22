@@ -16,8 +16,13 @@
       <option>{{ stop }}</option>
       {% endfor %}
     </select>
-    <select id="line_selector" onChange="filter_by_line()">
+    <select id="line_selector" onChange="add_filter()">
       <option>--Line--</option>
+    </select>
+    <select id="direction_selector" onChange="add_filter()">
+      <option>--Direction--</option>
+      <option>N</option>
+      <option>S</option>
     </select>
   </div>
   <table id="times"></table>
