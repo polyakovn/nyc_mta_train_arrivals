@@ -141,20 +141,6 @@ mta.make_station_list()
 mta.make_station_names()
 stop_names = mta.station_names
 
-def turn_to_json(arrivals_list):
-    arrival_string = '['
-    for arrival in arrivals_list:
-        arrival_times_string = '['
-        for time in arrival.arrival_times:
-            arrival_times_string += '"' + str(time) + '",'
-        arrival_times_string = arrival_times_string[:-1]
-        arrival_times_string += ']'
-        arrival_string += '{"line":"' + arrival.line + '", "direction":"' + arrival.direction + '", "arrival_times":' + arrival_times_string + "},"
-    arrival_string = arrival_string[:-1]
-    arrival_string += "]"
-    return arrival_string
-
-
 @app.route('/')
 def setup_page():
     return render_template("home.html", stop_names = stop_names)
@@ -162,7 +148,7 @@ def setup_page():
 @app.route('/station_info')
 def get_station_info():
     station_name = request.args['station']
-    arrivals_list = mta.get_station_arrivals(station_name)        
+    arrivals_list = mta.get_station_arrivals(station_name)
     return turn_to_json(arrivals_list)
 
 @app.route('/filter_by_line')
@@ -198,3 +184,16 @@ def add_line_and_direction_filter():
         if arrival.direction == direction_filter and arrival.line == line_filter:
             filtered_arrivals.append(arrival)
     return turn_to_json(filtered_arrivals)
+
+def turn_to_json(arrivals_list):
+    arrival_string = '['
+    for arrival in arrivals_list:
+        arrival_times_string = '['
+        for time in arrival.arrival_times:
+            arrival_times_string += '"' + str(time) + '",'
+        arrival_times_string = arrival_times_string[:-1]
+        arrival_times_string += ']'
+        arrival_string += '{"line":"' + arrival.line + '", "direction":"' + arrival.direction + '", "arrival_times":' + arrival_times_string + "},"
+    arrival_string = arrival_string[:-1]
+    arrival_string += "]"
+    return arrival_string

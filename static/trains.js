@@ -14,6 +14,7 @@ function get_station_info() {
         display_results(trains);
       } catch(error) {
         console.log(error);
+        alert("Sorry, it seems like the data for this station is currently unavailable. Try again in a few minutes!");
       }
     });
 }
