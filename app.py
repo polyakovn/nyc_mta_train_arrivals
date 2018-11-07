@@ -4,34 +4,78 @@ from google.transit import gtfs_realtime_pb2
 from protobuf_to_dict import protobuf_to_dict
 from orderedset import OrderedSet
 
+class Station():
+
+    def __init__(self, name, lines, station_id, latitude, longitude):
+        self.name = name
+        self.lines = lines
+        self.ids = [station_id]
+        self.next_arrivals = []
+        self.latitude = latitude
+        self.longitude = longitude
+
+    def add_lines(self, new_lines):
+        self.lines.extend(new_lines)
+
+    def add_id(self, station_id):
+        self.ids.append(station_id)
+
+    def add_arrival(self, arrival):
+        self.next_arrivals.append(arrival)
+
+    def get_train_feeds(self):
+        station_lines = set(self.lines)
+        train_feeds = []
+        if station_lines.intersection(set(['1','2','3','4','5','6','S'])):
+            train_feeds.append(1)
+        if station_lines.intersection(set(['A','C','E','H','S'])):
+            train_feeds.append(26)
+        if station_lines.intersection(set(['N','Q','R','W'])):
+            train_feeds.append(16)
+        if station_lines.intersection(set(['B','D','F','M'])):
+            train_feeds.append(21)
+        if station_lines.intersection(set(['L'])):
+            train_feeds.append(2)
+        if station_lines.intersection(set(['SIR'])):
+            train_feeds.append(11)
+        if station_lines.intersection(set(['G'])):
+            train_feeds.append(31)
+        if station_lines.intersection(set(['J','Z'])):
+            train_feeds.append(36)
+        if station_lines.intersection(set(['7'])):
+            train_feeds.append(51)
+        return train_feeds
+
 class MTA():
 
     def __init__(self):
-        self.stations = []
-        self.station_names = []
+        self.station_names = self.make_station_names()
+        self.stations = self.make_station_list()
 
     def make_station_list(self):
+        station_list = []
         with open('static/Stations.csv') as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 station_name = row[5]
                 station_lines = row[7].split(" ")
                 station_id = row[2]
-                self.add_or_modify_station(station_name, station_lines, station_id) #some station names have multiple ids/lines
-
-    def add_or_modify_station(self, station_name, station_lines, station_id):
-        for station in self.stations:
-            if station.name == station_name: #if a station with this name already exists, modify it
-                station.add_lines(station_lines)
-                station.add_id(station_id)
-                return
-        station = Station(station_name, station_lines, station_id)
-        self.stations.append(station)
+                station_lat = row[9]
+                station_long = row[10]
+                if station_name in self.station_names:
+                    for station in station_list:
+                        if station.name == station_name: #if a station with this name already exists, modify it
+                            station.add_lines(station_lines)
+                            station.add_id(station_id)
+                    station = Station(station_name, station_lines, station_id, station_lat, station_long)
+                    station_list.append(station)
+        return station_list
 
     def make_station_names(self):
         f = open("static/stop_names.txt")
         content = f.readlines()
-        self.station_names = [line.strip() for line in content]
+        station_names = [line.strip() for line in content]
+        return station_names
 
     def get_station(self, name):
         for station in self.stations:
@@ -87,46 +131,8 @@ class MTA():
             id_list.append(station_id + "N")
         return id_list
 
-class Station():
-
-    def __init__(self, name, lines, station_id):
-        self.name = name
-        self.lines = lines
-        self.ids = [station_id]
-        self.next_arrivals = []
-
-    def add_lines(self, new_lines):
-        self.lines.extend(new_lines)
-
-    def add_id(self, station_id):
-        self.ids.append(station_id)
-
-    def add_arrival(self, arrival):
-        self.next_arrivals.append(arrival)
-
-    def get_train_feeds(self):
-        station_lines = set(self.lines)
-        train_feeds = []
-        if station_lines.intersection(set(['1','2','3','4','5','6','S'])):
-            train_feeds.append(1)
-        if station_lines.intersection(set(['A','C','E','H','S'])):
-            train_feeds.append(26)
-        if station_lines.intersection(set(['N','Q','R','W'])):
-            train_feeds.append(16)
-        if station_lines.intersection(set(['B','D','F','M'])):
-            train_feeds.append(21)
-        if station_lines.intersection(set(['L'])):
-            train_feeds.append(2)
-        if station_lines.intersection(set(['SIR'])):
-            train_feeds.append(11)
-        if station_lines.intersection(set(['G'])):
-            train_feeds.append(31)
-        if station_lines.intersection(set(['J','Z'])):
-            train_feeds.append(36)
-        if station_lines.intersection(set(['7'])):
-            train_feeds.append(51)
-        return train_feeds
-
+app = Flask(__name__)
+mta = MTA()
 
 class Arrival():
 
@@ -135,15 +141,13 @@ class Arrival():
         self.direction = stop_id[-1]
         self.arrival_times = [arrival_time]
 
-app = Flask(__name__)
-mta = MTA()
-mta.make_station_list()
-mta.make_station_names()
-stop_names = mta.station_names
-
 @app.route('/')
 def setup_page():
-    return render_template("home.html", stop_names = stop_names)
+    return render_template("home.html", stations = mta.stations)
+
+@app.route('/hi')
+def hi():
+    return "hi"
 
 @app.route('/station_info')
 def get_station_info():

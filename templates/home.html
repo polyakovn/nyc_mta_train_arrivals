@@ -11,9 +11,9 @@
   <h4 id="current_time"></h4>
   <div id="selections">
     <select id="station" onChange="get_station_info()">
-      <option>--Station--</option>
-      {% for stop in stop_names %}
-      <option>{{ stop }}</option>
+      <!-- <option>--Station--</option> -->
+      {% for station in stations %}
+      <option data-latitude="{{station.latitude}}" data-longitude="{{station.longitude}}" value="{{station.name}}">{{ station.name }}</option>
       {% endfor %}
     </select>
     <select id="line_selector" onChange="add_filter()">
@@ -24,7 +24,9 @@
       <option>N</option>
       <option>S</option>
     </select>
+    <button id="location" onclick="sort()">Location!</button>
   </div>
   <table id="times"></table>
+  <div id="mylocation"></div>
 </body>
 </html>

@@ -8,16 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function get_station_info() {
   var selected_station = $('#station').find(":selected").text();
-    $.get('/station_info', {'station':selected_station} , function(train_info) {
-      try {
-        var trains = JSON.parse(train_info);
-        display_results(trains);
-      } catch(error) {
-        console.log(error);
-        alert("Sorry, it seems like the data for this station is currently unavailable. Try again in a few minutes!");
-      }
-    });
+  console.log($('#station').find(":selected").data("latitude"));
+  $.get('/station_info', {'station':selected_station} , function(train_info) {
+    try {
+      var trains = JSON.parse(train_info);
+      display_results(trains);
+    }
+    catch(error) {
+      console.log(error);
+      alert("Sorry, it seems like the data for this station is currently unavailable. Try again in a few minutes!");
+    }
+  });
 }
+
 
 function display_results(trains) {
   $('#times tr').remove();
@@ -98,4 +101,61 @@ function filter_by_direction(station, direction){
     var trains = JSON.parse(train_info);
     display_results(trains);
   });
+}
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position)=> {
+            console.log(position.coords.latitude);
+            console.log(position.coords.longitude);
+        });
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+
+
+function sort() {
+  if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position)=> {
+        var select = $('#station');
+        var options_list = select.find('option');
+        const cur_latitude = position.coords.latitude;
+        const cur_longitude = position.coords.longitude;
+        options_list.sort((a,b) => {
+          const a_latitude = a.getAttribute('data-latitude');
+          const a_longitude = a.getAttribute('data-longitude');
+          const b_latitude = b.getAttribute('data-latitude');
+          const b_longitude = b.getAttribute('data-longitude');
+          const a_distance = getDistanceFromLatLonInKm(cur_latitude,cur_longitude,a_latitude,a_longitude);
+          const b_distance = getDistanceFromLatLonInKm(cur_latitude,cur_longitude,b_latitude,b_longitude);
+          console.log(a_distance, b_distance, a.innerHTML, b.innerHTML);
+          return (a_distance > b_distance ? 1: -1);
+        });
+        select.html('').append(options_list);
+        $("#station").val(options_list[0].innerHTML);
+        get_station_info()
+      });
+  } else {
+      x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1);
+  var a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ;
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
 }
